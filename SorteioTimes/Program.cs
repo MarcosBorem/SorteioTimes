@@ -1,10 +1,16 @@
 ﻿using SorteioTimes.Context;
 using SorteioTimes.Domain;
+using SorteioTimes.Interfaces;
+using SorteioTimes.Interfaces.Generics;
+using SorteioTimes.Repositories;
 
 using (var db = new SorteioTimesContext())
 {
     ExibirMenu();
     List<Jogador> jogadores = db.Jogadores.ToList();
+    RepositoryBase<Jogador> jogadorService = new RepositoryJogador();
+    
+    
     bool sair = false;
     while (!sair)
     {
@@ -20,7 +26,13 @@ using (var db = new SorteioTimesContext())
                 ExcluirJogador(db);
                 break;
             case "3":
-                GerarTimes(jogadores);
+                Console.WriteLine("Digite o número de jogadores por time:");
+                int jogadoresPorTime = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Digite o número de times:");
+                int numTimes = int.Parse(Console.ReadLine());
+
+                jogadorService.GerarTimes(jogadores, jogadoresPorTime, numTimes);
                 break;
             case "4":
                 ListarJogadores(db);
@@ -67,60 +79,6 @@ static void AdicionarJogador(SorteioTimesContext db, List<Jogador> jogadores)
     db.SaveChanges();
 
     Console.WriteLine("Jogador adicionado com sucesso!");
-}
-static void GerarTimes(List<Jogador> jogadores)
-{
-    Console.WriteLine("Digite o número de jogadores por time:");
-    int jogadoresPorTime = int.Parse(Console.ReadLine());
-
-    Console.WriteLine("Digite o número de times:");
-    int numTimes = int.Parse(Console.ReadLine());
-
-    if (jogadores.Count < jogadoresPorTime * numTimes)
-    {
-        Console.WriteLine("Não há jogadores suficientes para formar os times.");
-        return;
-    }
-
-    Random random = new Random();
-    List<Jogador> jogadoresEmbaralhados = jogadores.OrderBy(x => random.Next()).ToList();
-
-    List<List<Jogador>> times = new List<List<Jogador>>();
-
-    for (int i = 0; i < numTimes; i++)
-    {
-        times.Add(new List<Jogador>());
-    }
-
-    int index = 0;
-    for (int i = 0; i < jogadoresPorTime; i++)
-    {
-        for (int j = 0; j < numTimes; j++)
-        {
-            Jogador jogador = jogadoresEmbaralhados[index];
-            times[j].Add(jogador);
-            index++;
-        }
-    }
-
-    Console.WriteLine("Times:");
-
-    for (int i = 0; i < numTimes; i++)
-    {
-        Console.WriteLine();
-        Console.WriteLine($"Time {i + 1}:");
-
-        double somaNotas = 0;
-        foreach (Jogador jogador in times[i])
-        {
-            Console.WriteLine($"{jogador.Nome} - {jogador.Nota}");
-            somaNotas += jogador.Nota;
-        }
-
-        double media = (double)somaNotas / jogadoresPorTime;
-        Console.WriteLine($"Média: {media:F2}");
-        Console.WriteLine();
-    }
 }
 static void ListarJogadores(SorteioTimesContext db)
 {
