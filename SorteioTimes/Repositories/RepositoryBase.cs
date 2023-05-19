@@ -1,11 +1,5 @@
 ﻿using SorteioTimes.Context;
-using SorteioTimes.Domain;
 using SorteioTimes.Interfaces.Generics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SorteioTimes.Repositories
 {
@@ -29,6 +23,7 @@ namespace SorteioTimes.Repositories
         public void GerarTimes(List<T> itens, int itensPorTime, int numTimes)
         {
             Random random = new Random();
+            //List<T> jogadoresDisponiveis = itens.Where(j => !j.Excluido).ToList();
             List<T> itensEmbaralhados = itens.OrderBy(x => random.Next()).ToList();
 
             List<List<T>> times = new List<List<T>>();
@@ -39,39 +34,40 @@ namespace SorteioTimes.Repositories
             }
 
             int itemIndex = 0;
-            int timesComItensCompletos = itens.Count / itensPorTime;
-            int itensRestantes = itens.Count % itensPorTime;
 
             for (int i = 0; i < numTimes; i++)
             {
-                int itensNoTime = itensPorTime;
-
-                if (i < itensRestantes)
+                for (int j = 0; j < itensPorTime; j++)
                 {
-                    itensNoTime++;
-                }
-
-                for (int j = 0; j < itensNoTime; j++)
-                {
-                    T item = itensEmbaralhados[itemIndex];
-                    times[i].Add(item);
-                    itemIndex++;
+                    if (itemIndex < itens.Count)
+                    {
+                        T item = itensEmbaralhados[itemIndex];
+                        if (itens.Contains(item) && !times.Any(time => time.Contains(item)))
+                        {
+                            times[i].Add(item);
+                        }
+                        else
+                        {
+                            j--; // Desconsidera a iteração atual e repete para preencher o lugar vazio
+                        }
+                        itemIndex++;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
-
             Console.WriteLine("Times:");
-            Console.WriteLine();
 
             for (int i = 0; i < numTimes; i++)
             {
                 Console.WriteLine($"Time {i + 1}:");
-
                 double somaNotas = 0;
                 foreach (dynamic item in times[i])
                 {
                     Console.WriteLine($"{item.Nome}  {item.Nota}");
                     somaNotas += item.Nota;
-
                 }
                 double media = (double)somaNotas / itensPorTime;
                 Console.WriteLine($"Média: {media:F2}");

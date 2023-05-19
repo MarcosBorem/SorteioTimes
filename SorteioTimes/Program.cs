@@ -1,16 +1,15 @@
 ﻿using SorteioTimes.Context;
-using SorteioTimes.Domain;
+using SorteioTimes.Model;
 using SorteioTimes.Interfaces;
 using SorteioTimes.Interfaces.Generics;
 using SorteioTimes.Repositories;
 
 using (var db = new SorteioTimesContext())
-{
-    ExibirMenu();
+{   
     List<Jogador> jogadores = db.Jogadores.ToList();
     RepositoryBase<Jogador> jogadorService = new RepositoryJogador();
-    
-    
+
+    ExibirMenu();
     bool sair = false;
     while (!sair)
     {
@@ -23,6 +22,7 @@ using (var db = new SorteioTimesContext())
                 AdicionarJogador(db, jogadores);
                 break;
             case "2":
+                ListarJogadores(db);
                 ExcluirJogador(db);
                 break;
             case "3":
@@ -69,6 +69,7 @@ static void ExibirMenu()
 }
 static void AdicionarJogador(SorteioTimesContext db, List<Jogador> jogadores)
 {
+
     Console.WriteLine("Digite o nome do jogador:");
     string nome = Console.ReadLine();
 
@@ -78,7 +79,7 @@ static void AdicionarJogador(SorteioTimesContext db, List<Jogador> jogadores)
     db.Jogadores.Add(new Jogador { Nome = nome, Nota = nota });
     db.SaveChanges();
 
-    Console.WriteLine("Jogador adicionado com sucesso!");
+    Console.WriteLine($"Jogador {nome} adicionado com sucesso!");
 }
 static void ListarJogadores(SorteioTimesContext db)
 {
@@ -117,12 +118,16 @@ static void AlterarNotaJogador(SorteioTimesContext db)
 }
 static void ExcluirJogador(SorteioTimesContext db)
 {
+    
     Console.WriteLine("Digite o ID do jogador que deseja excluir:");
     int id = int.Parse(Console.ReadLine());
 
     Jogador jogador = db.Jogadores.Find(id);
-    if (jogador != null)
+    var jogadornabasededados = db.Jogadores.FirstOrDefault(j => j.Id == id);
+
+    if (jogadornabasededados != null)
     {
+       // jogador.Excluido = true;
         db.Jogadores.Remove(jogador);
         db.SaveChanges();
         Console.WriteLine("Jogador excluído com sucesso!");

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SorteioTimes.Domain;
+using SorteioTimes.Model;
 
 namespace SorteioTimes.Context
 {
@@ -7,15 +7,15 @@ namespace SorteioTimes.Context
     {
         public SorteioTimesContext()
         {
+
         }
         public SorteioTimesContext(DbContextOptions<SorteioTimesContext> options)
             : base(options)
         {
-        }
-              
 
-        public virtual DbSet<Jogador> Jogadores { get; set; }
-        
+        }        
+
+        public virtual DbSet<Jogador> Jogadores { get; set; }        
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -24,12 +24,5 @@ namespace SorteioTimes.Context
                 optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=SorteioTimes;User Id=postgres;Password=123456;");
             }
         }
-        /*protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Time>(entity =>
-            {
-                entity.HasNoKey();
-            });
-        }*/
     }
 }

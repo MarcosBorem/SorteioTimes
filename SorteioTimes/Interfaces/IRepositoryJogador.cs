@@ -1,4 +1,4 @@
-﻿using SorteioTimes.Domain;
+﻿using SorteioTimes.Model;
 using SorteioTimes.Interfaces.Generics;
 using System;
 using System.Collections.Generic;

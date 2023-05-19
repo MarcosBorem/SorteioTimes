@@ -1,10 +1,5 @@
-﻿using SorteioTimes.Domain;
-using SorteioTimes.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SorteioTimes.Interfaces;
+using SorteioTimes.Model;
 
 namespace SorteioTimes.Repositories
 {
